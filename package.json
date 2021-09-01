@@ -11,7 +11,7 @@
     "start": "node dist/server.js",
     "server": "ts-node --files src/server.ts",
     "dev": "nodemon --config .internal/nodemon.json",
-    "docker:build": "docker build -f .internal/Dockerfile ."
+    "docker:build": "docker build ."
   },
   "license": "MIT",
   "devDependencies": {
