@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gm-watch
+  name: gm-watch
+spec:
+  ports:
+    - port: 9005
+      protocol: TCP
+      targetPort: 9005
+  selector:
+    app: gm-watch

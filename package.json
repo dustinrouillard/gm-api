@@ -1,0 +1,60 @@
+{
+  "name": "gm-archiver",
+  "private": true,
+  "version": "1.0.0",
+  "author": "Dustin Rouillard <code@dstn.to>",
+  "main": "dist/server.js",
+  "prettier": "./.internal/prettierrc.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "node dist/server.js",
+    "server": "ts-node --files src/server.ts",
+    "dev": "nodemon --config .internal/nodemon.json",
+    "docker:build": "docker build -f .internal/Dockerfile ."
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/amqplib": "^0.8.2",
+    "@types/isomorphic-fetch": "^0.0.35",
+    "@types/node": "^16.7.9",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.3.2",
+    "ts-node": "^10.2.1",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.2"
+  },
+  "dependencies": {
+    "@dustinrouillard/database-connectors": "^1.0.9",
+    "@dustinrouillard/fastify-utilities": "^1.2.25",
+    "amqplib": "^0.8.0",
+    "deep-object-diff": "^1.1.0",
+    "dotenv": "^10.0.0",
+    "erlpack": "^0.1.3",
+    "fastify": "^3.20.2",
+    "fastify-cors": "^6.0.2",
+    "fastify-plugin": "^3.0.0",
+    "isomorphic-fetch": "^3.0.0"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    },
+    "extends": [
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+      "camelcase": "off",
+      "@typescript-eslint/camelcase": [
+        "off"
+      ]
+    }
+  }
+}

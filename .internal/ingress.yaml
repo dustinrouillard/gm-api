@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+
+kind: Ingress
+metadata:
+  name: gm-dstn
+spec:
+  rules:
+    - host: gm-api.dstn.to
+      http:
+        paths:
+          - backend:
+              serviceName: gm-watch
+              servicePort: 9005
+    - host: gm-gateway.dstn.to
+      http:
+        paths:
+          - backend:
+              serviceName: gm-gateway
+              servicePort: 5060
