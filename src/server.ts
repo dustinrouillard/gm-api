@@ -20,7 +20,7 @@ server.register(Logger());
 
 // Routes
 server.get('/username/:username', async (req: FastifyRequest<{ Params: { username: string } }>, reply) => {
-  const user = await PostgresClient.oneOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE username = $1;', [
+  const user = await PostgresClient.oneOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE username = $1 ORDER BY score LIMIT 1;', [
     req.params.username
   ]);
   if (!user) return Failed(reply, 404, 'user_not_found');
