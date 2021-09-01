@@ -27,7 +27,7 @@ export async function getGms(): Promise<void> {
         post.creator.avatarUrl
       ]);
 
-      if (user && user.score != post.creator.gmScore) await PostgresClient.none('UPDATE users SET score = $2 WHERE id = $1;', [post.creator.uid, post.creator.gmScore + 1]);
+      if (user && user.score != (post.creator.gmScore + 1)) await PostgresClient.none('UPDATE users SET score = $2 WHERE id = $1;', [post.creator.uid, post.creator.gmScore + 1]);
 
       await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator) VALUES ($1, $2, $3, $4)`, [id, new Date(post.createdAt * 1000), post.type, post.creator.uid]);
 
