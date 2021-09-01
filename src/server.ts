@@ -20,22 +20,36 @@ server.register(Logger());
 
 // Routes
 server.get('/username/:username', async (req: FastifyRequest<{ Params: { username: string } }>, reply) => {
-  const user = await PostgresClient.oneOrNone('SELECT id, score, username, name, bio, avatar FROM users WHERE username = $1;', [req.params.username]);
+  const user = await PostgresClient.oneOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE username = $1;', [
+    req.params.username
+  ]);
   if (!user) return Failed(reply, 404, 'user_not_found');
 
-  const lastPost = await PostgresClient.oneOrNone('SELECT id, creation_time, type, creator FROM posts WHERE creator = $1 ORDER BY creation_time DESC LIMIT 1;', [user.id])
+  const lastPost = await PostgresClient.oneOrNone('SELECT id, creation_time, type, creator FROM posts WHERE creator = $1 ORDER BY creation_time DESC LIMIT 1;', [user.id]);
 
   return Success(reply, 200, { user, last_post: lastPost });
 });
 
+server.get('/search', async (req: FastifyRequest<{ Querystring: { query: string } }>, reply) => {
+  const results = await PostgresClient.manyOrNone(
+    "SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE username = $1 OR username LIKE CONCAT($1, '%') ORDER BY score DESC LIMIT 25;",
+    [req.query.query]
+  );
+  if (!results) return Failed(reply, 404, 'query_not_found');
+
+  return Success(reply, 200, { results });
+});
+
 server.get('/top', async (req: FastifyRequest<{ Params: { username: string } }>, reply) => {
-  const users = await PostgresClient.manyOrNone('SELECT id, score, username, name, bio, avatar FROM users ORDER BY score DESC LIMIT 10;');
+  const users = await PostgresClient.manyOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE rank <= 10 ORDER BY rank ASC;');
   if (!users) return Failed(reply, 404, 'user_not_found');
 
   return Success(reply, 200, users);
 });
 
-server.get('/health', (_req, reply) => { reply.status(204).send() });
+server.get('/health', (_req, reply) => {
+  reply.status(204).send();
+});
 
 server.register(Missing);
 
@@ -43,8 +57,7 @@ server.listen(PortConfig, '0.0.0.0', async () => {
   Log(`Server ready on ${PortConfig}`);
 
   if (!DisableTask) {
-    Log('Starting listen task for new gm\'s ;)');
+    Log("Starting listen task for new gm's ;)");
     import('./utils/task');
   }
 });
-
