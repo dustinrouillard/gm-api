@@ -3,6 +3,7 @@ import { RedisClient } from "@dustinrouillard/database-connectors/redis";
 import { Debug } from "@dustinrouillard/fastify-utilities/modules/logger";
 
 import { pack } from "erlpack";
+import { DiscordHook } from "../config";
 
 import { RabbitChannel } from "../connectivity/rabbitmq";
 import { getPosts } from "./api";
@@ -48,7 +49,7 @@ export async function getGms(): Promise<void> {
           }
         }
       }));
-      await fetch('https://canary.discord.com/api/webhooks/882166636403118140/vJ85vraCHWHysiSQMt25MoQFo0t7Y_NDSV3oyNT_icBAdqTP4jpWXcPrZrWoJtCbftEz', {
+      if (DiscordHook) await fetch(DiscordHook, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
