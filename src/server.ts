@@ -35,6 +35,8 @@ server.get('/top', async (req: FastifyRequest<{ Params: { username: string } }>,
   return Success(reply, 200, users);
 });
 
+server.get('/health', (_req, reply) => { reply.status(204).send() });
+
 server.register(Missing);
 
 server.listen(PortConfig, '0.0.0.0', async () => {
