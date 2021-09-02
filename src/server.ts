@@ -47,7 +47,7 @@ server.get('/top', async (req: FastifyRequest, reply) => {
 });
 
 server.get('/recents', async (req: FastifyRequest, reply) => {
-  const posts = await PostgresClient.manyOrNone('SELECT id, creation_time, type, creator FROM posts ORDER BY creation_time ASC LIMIT 10;');
+  const posts = await PostgresClient.manyOrNone('SELECT id, creation_time, type, creator FROM posts ORDER BY creation_time DESC LIMIT 10;');
 
   return Success(reply, 200, posts);
 });

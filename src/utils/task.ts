@@ -85,8 +85,8 @@ export async function getGms(): Promise<void> {
           RabbitChannel.sendToQueue('dstn-gm-gateway-ingest', pack({ t: 0, d: { leaderboard: cachedTop } }));
         }
       }
-    } catch (error) {
-      Debug('Error polling posts, api is probably down, waiting 1 minute before trying again');
+    } catch (error: any) {
+      Debug('Error polling posts, api is probably down, waiting 1 minute before trying again', error.toString());
 
       throttle = true;
       await new Promise(resolve => setTimeout(() => {
