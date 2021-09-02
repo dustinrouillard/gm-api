@@ -31,7 +31,7 @@ export async function getGms(): Promise<void> {
           post.creator.avatarUrl
         ]);
 
-        if (user.username != post.creator.username || user.name != post.creator.name || user.avatarUrl != post.creator.avatarUrl) {
+        if (user && (user.username != post.creator.username || user.name != post.creator.name || user.avatarUrl != post.creator.avatarUrl)) {
           await PostgresClient.none('UPDATE users SET score = $2, name = $3, username= $4, avatar = $5 WHERE id = $1;', [
             post.creator.uid,
             user.score != post.creator.gmScore + 1 ? post.creator.gmScore + 1 : post.creator.gmScore,
