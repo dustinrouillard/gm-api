@@ -7,12 +7,12 @@ export async function getPosts(): Promise<Post[]> {
   return data.feed.reverse();
 }
 
-export async function getLb(): Promise<Creator[]> {
+export async function getLb(ignoreCache?: boolean): Promise<Creator[]> {
   const cached = JSON.parse(await RedisClient.get('users/top/official') || '[]');
 
-  if (!cached[0]) {
+  if (!cached[0] || ignoreCache) {
     const data: { leaderboard: Creator[] } = await fetch('https://api.gm.town/users/leaderboard', { headers: { authorization: `Bearer ${GMAuth}` } }).then(r => r.json());
-    await RedisClient.set('users/top/official', JSON.stringify(data.leaderboard), 'ex', 600);
+    if (!ignoreCache) await RedisClient.set('users/top/official', JSON.stringify(data.leaderboard));
     return data.leaderboard;
   }
 

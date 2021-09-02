@@ -6,7 +6,7 @@ import { pack } from "erlpack";
 import { DiscordHook } from "../config";
 
 import { RabbitChannel } from "../connectivity/rabbitmq";
-import { getPosts } from "./api";
+import { getLb, getPosts } from "./api";
 
 export async function getGms(): Promise<void> {
   let throttle = false;
@@ -105,9 +105,17 @@ export async function getGms(): Promise<void> {
     RabbitChannel.sendToQueue('dstn-gm-gateway-ingest', pack({ t: 0, d: { leaderboard: users } }));
   }
 
-  setInterval(async () => {
-    call()
-  }, 10000);
+  async function callLb() {
+    const last_top = JSON.parse(await RedisClient.get('users/top/official') || '[]');
+    const lb = await getLb(true);
+    if (JSON.stringify(lb) == JSON.stringify(last_top)) return;
+    await RedisClient.set('users/top/official', JSON.stringify(lb));
+
+    RabbitChannel.sendToQueue('dstn-gm-gateway-ingest', pack({ t: 2, d: { leaderboard: lb } }));
+  }
+
+  setInterval(call, 10000);
+  setInterval(callLb, 1000 * 60 * 10);
 }
 
 getGms();
