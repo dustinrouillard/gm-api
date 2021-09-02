@@ -33,14 +33,14 @@ export async function getGms(): Promise<void> {
 
         if (user && user.score != (post.creator.gmScore + 1)) await PostgresClient.none('UPDATE users SET score = $2 WHERE id = $1;', [post.creator.uid, post.creator.gmScore + 1]);
 
-        await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator) VALUES ($1, $2, $3, $4)`, [id, new Date(post.createdAt * 1000), post.type, post.creator.uid]);
+        await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator) VALUES ($1, $2, $3, $4)`, [id, new Date(post.createdAt), post.type, post.creator.uid]);
 
         Debug(`New ${post.type.toLowerCase()} from ${post.creator.name} @${post.creator.username}`);
         RabbitChannel.sendToQueue('dstn-gm-gateway-ingest', pack({
           t: 1, d: {
             post: {
               id,
-              creation_time: new Date(post.createdAt * 1000),
+              creation_time: new Date(post.createdAt),
               type: post.type,
               creator: post.creator.uid
             }, user: {
@@ -62,7 +62,7 @@ export async function getGms(): Promise<void> {
               description: `${post.creator.name} currently has ${(post.creator.gmScore + 1).toLocaleString()
                 } score`,
               author: { name: `${post.creator.name} @${post.creator.username} `, icon_url: post.creator.avatarUrl },
-              timestamp: new Date(post.createdAt * 1000).toISOString(),
+              timestamp: new Date(post.createdAt).toISOString(),
               footer: { text: 'gm watcher • dstn.to' }
             }]
           })
