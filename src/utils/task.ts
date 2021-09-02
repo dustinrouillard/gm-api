@@ -49,7 +49,7 @@ export async function getGms(): Promise<void> {
           t: 1, d: {
             post: {
               id,
-              creation_time: new Date(post.createdAt),
+              creation_time: new Date(post.createdAt).toISOString(),
               type: post.type,
               creator: {
                 id: post.creator.uid,
