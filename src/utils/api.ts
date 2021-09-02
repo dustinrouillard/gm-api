@@ -9,7 +9,12 @@ export async function getPosts(): Promise<Post[]> {
 
 export async function getLb(): Promise<Creator[]> {
   const cached = JSON.parse(await RedisClient.get('users/top/official') || '[]');
-  const data: { leaderboard: Creator[] } = await fetch('https://api.gm.town/users/leaderboard', { headers: { authorization: `Bearer ${GMAuth}` } }).then(r => r.json());
-  if (!cached[0]) await RedisClient.set('users/top/official', JSON.stringify(data), 'ex', 600);
-  return !cached[0] ? data.leaderboard : cached;
+
+  if (!cached[0]) {
+    const data: { leaderboard: Creator[] } = await fetch('https://api.gm.town/users/leaderboard', { headers: { authorization: `Bearer ${GMAuth}` } }).then(r => r.json());
+    await RedisClient.set('users/top/official', JSON.stringify(data), 'ex', 600);
+    return data.leaderboard;
+  }
+
+  return cached;
 }
