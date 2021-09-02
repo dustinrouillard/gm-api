@@ -1,4 +1,4 @@
-import { RedisClient } from "@dustinrouillard/database-connectors";
+import { RedisClient } from "@dustinrouillard/database-connectors/redis";
 import { GMAuth } from "../config";
 import { Creator, Post } from "../types/Post";
 
