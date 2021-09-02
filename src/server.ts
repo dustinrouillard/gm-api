@@ -10,6 +10,7 @@ SetConfig({ disableTimestamp: true, logColor: 'blueBright' });
 import { Success, Failed } from '@dustinrouillard/fastify-utilities/modules/response';
 import { Logger, Missing } from '@dustinrouillard/fastify-utilities/modules/request';
 import { PostgresClient } from '@dustinrouillard/database-connectors/postgres';
+import { getLb } from './utils/api';
 
 const server = fastify();
 
@@ -44,6 +45,12 @@ server.get('/top', async (req: FastifyRequest, reply) => {
   const users = await PostgresClient.manyOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE users.hidden IS FALSE ORDER BY rank ASC LIMIT 10;');
 
   return Success(reply, 200, users);
+});
+
+server.get('/top/official', async (req: FastifyRequest, reply) => {
+  const lb = await getLb();
+
+  return Success(reply, 200, lb);
 });
 
 server.get('/recents', async (req: FastifyRequest, reply) => {
