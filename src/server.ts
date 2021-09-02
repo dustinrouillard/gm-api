@@ -56,7 +56,7 @@ server.get('/recents', async (req: FastifyRequest, reply) => {
     FROM
       posts p
       LEFT JOIN users u ON u.id = p.creator
-      LEFT JOIN ranks r ON i.id = ranks.id
+      LEFT JOIN ranks r ON u.id = ranks.id
     ORDER BY
       creation_time DESC
     LIMIT 10;
