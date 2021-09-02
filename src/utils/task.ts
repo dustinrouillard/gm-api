@@ -90,7 +90,7 @@ export async function getGms(): Promise<void> {
 
   async function call() {
     const last_top = JSON.parse(await RedisClient.get('users/top') || '[]');
-    const users = await PostgresClient.manyOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE rank <= 10 ORDER BY rank ASC;');
+    const users = await PostgresClient.manyOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE rank <= 10 ORDER BY rank ASC LIMIT 10;');
     if (JSON.stringify(users) == JSON.stringify(last_top)) return;
     await RedisClient.set('users/top', JSON.stringify(users));
 

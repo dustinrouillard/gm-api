@@ -40,11 +40,16 @@ server.get('/search', async (req: FastifyRequest<{ Querystring: { query: string 
   return Success(reply, 200, { results });
 });
 
-server.get('/top', async (req: FastifyRequest<{ Params: { username: string } }>, reply) => {
-  const users = await PostgresClient.manyOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE rank <= 10 ORDER BY rank ASC;');
-  if (!users) return Failed(reply, 404, 'user_not_found');
+server.get('/top', async (req: FastifyRequest, reply) => {
+  const users = await PostgresClient.manyOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE rank <= 10 ORDER BY rank ASC LIMIT 10;');
 
   return Success(reply, 200, users);
+});
+
+server.get('/recents', async (req: FastifyRequest, reply) => {
+  const posts = await PostgresClient.manyOrNone('SELECT id, creation_time, type, creator FROM posts ORDER BY creation_time ASC LIMIT 10;');
+
+  return Success(reply, 200, posts);
 });
 
 server.get('/health', (_req, reply) => {
