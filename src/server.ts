@@ -52,10 +52,11 @@ server.get('/recents', async (req: FastifyRequest, reply) => {
       p.id,
         p.creation_time,
         p.type,
-        json_build_object('id', u.id, 'name', u.name, 'username', u.username, 'score', u.score, 'avatar', u.avatar, 'bio', u.bio) as creator
+        json_build_object('id', u.id, 'name', u.name, 'username', u.username, 'score', u.score, 'avatar', u.avatar, 'bio', u.bio, 'rank', r.rank) as creator
     FROM
       posts p
       LEFT JOIN users u ON u.id = p.creator
+      LEFT JOIN ranks r ON i.id = ranks.id
     ORDER BY
       creation_time DESC
     LIMIT 10;
