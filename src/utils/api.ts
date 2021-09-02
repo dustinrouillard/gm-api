@@ -12,7 +12,7 @@ export async function getLb(): Promise<Creator[]> {
 
   if (!cached[0]) {
     const data: { leaderboard: Creator[] } = await fetch('https://api.gm.town/users/leaderboard', { headers: { authorization: `Bearer ${GMAuth}` } }).then(r => r.json());
-    await RedisClient.set('users/top/official', JSON.stringify(data), 'ex', 600);
+    await RedisClient.set('users/top/official', JSON.stringify(data.leaderboard), 'ex', 600);
     return data.leaderboard;
   }
 
