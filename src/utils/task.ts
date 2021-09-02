@@ -17,7 +17,7 @@ export async function getGms(): Promise<void> {
       const posts = await getPosts();
 
       for await (const post of posts) {
-        const id = Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64');
+        const id = post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64');
         const db = await PostgresClient.oneOrNone('SELECT id FROM posts WHERE id = $1;', [id]);
         if (db) continue;
 

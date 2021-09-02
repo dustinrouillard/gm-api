@@ -1,4 +1,5 @@
 export interface Post {
+  id: string;
   createdAt: number;
   type: string;
   creator: Creator;
