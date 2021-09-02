@@ -44,20 +44,22 @@ export async function getGms(): Promise<void> {
         await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator) VALUES ($1, $2, $3, $4)`, [id, new Date(post.createdAt), post.type, post.creator.uid]);
 
         Debug(`New ${post.type.toLowerCase()} from ${post.creator.name} @${post.creator.username}`);
+        const rank = await PostgresClient.oneOrNone('SELECT rank FROM ranks WHERE id = $1;', [post.creator.uid]);
         RabbitChannel.sendToQueue('dstn-gm-gateway-ingest', pack({
           t: 1, d: {
             post: {
               id,
               creation_time: new Date(post.createdAt),
               type: post.type,
-              creator: post.creator.uid
-            }, user: {
-              id: post.creator.uid,
-              score: post.creator.gmScore + 1,
-              username: post.creator.username,
-              name: post.creator.name,
-              bio: post.creator.bio,
-              avatar: post.creator.avatarUrl
+              creator: {
+                id: post.creator.uid,
+                score: post.creator.gmScore + 1,
+                username: post.creator.username,
+                name: post.creator.name,
+                bio: post.creator.bio,
+                avatar: post.creator.avatarUrl,
+                rank: rank.rank
+              }
             }
           }
         }));
