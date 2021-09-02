@@ -1,6 +1,6 @@
 import { PostgresClient } from "@dustinrouillard/database-connectors/postgres";
 import { RedisClient } from "@dustinrouillard/database-connectors/redis";
-import { Debug, Error } from "@dustinrouillard/fastify-utilities/modules/logger";
+import { Debug } from "@dustinrouillard/fastify-utilities/modules/logger";
 
 import { pack } from "erlpack";
 import { DiscordHook } from "../config";
@@ -86,7 +86,7 @@ export async function getGms(): Promise<void> {
         resolve(true);
       }, 1000 * 60));
     }
-  }, 1000);
+  }, 5000);
 
   async function call() {
     const last_top = JSON.parse(await RedisClient.get('users/top') || '[]');
