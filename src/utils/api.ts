@@ -7,6 +7,6 @@ export async function getPosts(): Promise<Post[]> {
 }
 
 export async function getLb(): Promise<Creator[]> {
-  const data: { leaderboard: Creator[] } = await fetch('https://api.gm/town/users/leaderboard', { headers: { authorization: `Bearer ${GMAuth}` } }).then(r => r.json());
+  const data: { leaderboard: Creator[] } = await fetch('https://api.gm.town/users/leaderboard', { headers: { authorization: `Bearer ${GMAuth}` } }).then(r => r.json());
   return data.leaderboard;
 }
