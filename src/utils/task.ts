@@ -47,19 +47,17 @@ export async function getGms(): Promise<void> {
         const rank = await PostgresClient.oneOrNone('SELECT rank FROM ranks WHERE id = $1;', [post.creator.uid]);
         RabbitChannel.sendToQueue('dstn-gm-gateway-ingest', pack({
           t: 1, d: {
-            post: {
-              id,
-              creation_time: new Date(post.createdAt).toISOString(),
-              type: post.type,
-              creator: {
-                id: post.creator.uid,
-                score: post.creator.gmScore + 1,
-                username: post.creator.username,
-                name: post.creator.name,
-                bio: post.creator.bio,
-                avatar: post.creator.avatarUrl,
-                rank: rank.rank
-              }
+            id,
+            creation_time: new Date(post.createdAt).toISOString(),
+            type: post.type,
+            creator: {
+              id: post.creator.uid,
+              score: post.creator.gmScore + 1,
+              username: post.creator.username,
+              name: post.creator.name,
+              bio: post.creator.bio,
+              avatar: post.creator.avatarUrl,
+              rank: rank.rank
             }
           }
         }));
