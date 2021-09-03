@@ -68,7 +68,7 @@ server.post('/gm', async (req: FastifyRequest, reply) => {
   const tomorrows_date = new Date();
   tomorrows_date.setHours(24, 0, 0, 0);
 
-  await RedisClient.set('last/gm', new Date().toISOString(), 'exat', tomorrows_date.getTime());
+  await RedisClient.set('last/gm', new Date().toISOString(), 'pxat', tomorrows_date.getTime());
 
   return Success(reply, 201);
 });
