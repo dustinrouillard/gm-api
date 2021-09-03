@@ -17,6 +17,10 @@ export async function getGms(): Promise<void> {
       const posts = await getPosts();
 
       for await (const post of posts) {
+        const has_post = await RedisClient.get(`posts/${post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64')}`);
+        if (has_post) continue;
+        else await RedisClient.set(`posts/${post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64')}`, 'true');
+
         const db = await PostgresClient.oneOrNone('SELECT id FROM posts WHERE id = $1;', [post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64')]);
         if (db) continue;
 
@@ -33,7 +37,7 @@ export async function getGms(): Promise<void> {
           await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator, text) VALUES ($1, $2, $3, $4, $5)`, [post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64'), new Date(post.createdAt), post.type, post.creator.uid, post.text || 'gm']);
         } catch (error) { }
 
-        if (user.hidden) continue;
+        if (user && user.hidden) continue;
 
         if (user && (user.username != post.creator.username || user.name != post.creator.name || user.avatarUrl != post.creator.avatarUrl)) {
           await PostgresClient.none('UPDATE users SET name = $2, username = $3, bio = $4, avatar = $5 WHERE id = $1;', [
