@@ -7,11 +7,11 @@ import fastifyCors from 'fastify-cors';
 import { Log, SetConfig } from '@dustinrouillard/fastify-utilities/modules/logger';
 SetConfig({ disableTimestamp: true, logColor: 'blueBright' });
 
+import { RedisClient } from '@dustinrouillard/database-connectors/redis';
 import { Success, Failed } from '@dustinrouillard/fastify-utilities/modules/response';
 import { Logger, Missing } from '@dustinrouillard/fastify-utilities/modules/request';
 import { PostgresClient } from '@dustinrouillard/database-connectors/postgres';
 import { getLb, postGm } from './utils/api';
-import { RedisClient } from '@dustinrouillard/database-connectors';
 
 const server = fastify();
 
