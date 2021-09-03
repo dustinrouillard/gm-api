@@ -20,7 +20,7 @@ export async function getGms(): Promise<void> {
         const db = await PostgresClient.oneOrNone('SELECT id FROM posts WHERE id = $1;', [post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64')]);
         if (db) continue;
 
-        const user = await PostgresClient.oneOrNone('SELECT id, score, avatar, name, username FROM users WHERE id = $1;', [post.creator.uid]);
+        const user = await PostgresClient.oneOrNone('SELECT id, score, avatar, name, username, hidden FROM users WHERE id = $1;', [post.creator.uid]);
         if (!user) await PostgresClient.none('INSERT INTO users (id, username, name, bio, avatar) VALUES ($1, $2, $3, $4, $5);', [
           post.creator.uid,
           post.creator.username,
@@ -29,13 +29,12 @@ export async function getGms(): Promise<void> {
           post.creator.avatarUrl
         ]);
 
-
-
         try {
           await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator, text) VALUES ($1, $2, $3, $4, $5)`, [post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64'), new Date(post.createdAt), post.type, post.creator.uid, post.text || 'gm']);
         } catch (error) { }
 
-        if (user.hidden) return;
+        if (user.hidden) continue;
+
         if (user && (user.username != post.creator.username || user.name != post.creator.name || user.avatarUrl != post.creator.avatarUrl)) {
           await PostgresClient.none('UPDATE users SET name = $2, username = $3, bio = $4, avatar = $5 WHERE id = $1;', [
             post.creator.uid,
