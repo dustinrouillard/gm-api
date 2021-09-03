@@ -10,7 +10,8 @@ SetConfig({ disableTimestamp: true, logColor: 'blueBright' });
 import { Success, Failed } from '@dustinrouillard/fastify-utilities/modules/response';
 import { Logger, Missing } from '@dustinrouillard/fastify-utilities/modules/request';
 import { PostgresClient } from '@dustinrouillard/database-connectors/postgres';
-import { getLb } from './utils/api';
+import { getLb, postGm } from './utils/api';
+import { RedisClient } from '@dustinrouillard/database-connectors';
 
 const server = fastify();
 
@@ -51,6 +52,23 @@ server.get('/top/official', async (req: FastifyRequest, reply) => {
   const lb = await getLb();
 
   return Success(reply, 200, lb);
+});
+
+server.get('/gm/last', async (req: FastifyRequest, reply) => {
+  const last = await RedisClient.get('last/gm');
+
+  return Success(reply, 200, last);
+});
+
+server.post('/gm', async (req: FastifyRequest, reply) => {
+  await postGm();
+
+  const tomorrows_date = new Date();
+  tomorrows_date.setHours(24, 0, 0, 0);
+
+  await RedisClient.set('last/gm', new Date().toISOString(), 'exat', tomorrows_date.getTime());
+
+  return Success(reply, 201);
 });
 
 server.get('/recents', async (req: FastifyRequest, reply) => {

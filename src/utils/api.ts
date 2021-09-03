@@ -7,6 +7,11 @@ export async function getPosts(): Promise<Post[]> {
   return data.feed.reverse();
 }
 
+export async function postGm(): Promise<boolean> {
+  const data = await fetch('https://api.gm.town/posts/gm', { method: 'POST', headers: { authorization: `Bearer ${GMAuth}` } }).then(r => r.json());
+  return !(JSON.stringify(data.post) == '{}');
+}
+
 export async function getLb(ignoreCache?: boolean): Promise<Creator[]> {
   const cached = JSON.parse(await RedisClient.get('users/top/official') || '[]');
 
