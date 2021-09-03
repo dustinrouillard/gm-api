@@ -17,8 +17,7 @@ export async function getGms(): Promise<void> {
       const posts = await getPosts();
 
       for await (const post of posts) {
-        const id = post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64');
-        const db = await PostgresClient.oneOrNone('SELECT id FROM posts WHERE id = $1;', [id]);
+        const db = await PostgresClient.oneOrNone('SELECT id FROM posts WHERE id = $1;', [post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64')]);
         if (db) continue;
 
         const user = await PostgresClient.oneOrNone('SELECT id, score, avatar, name, username FROM users WHERE id = $1;', [post.creator.uid]);
@@ -42,7 +41,7 @@ export async function getGms(): Promise<void> {
         }
 
         try {
-          await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator, text) VALUES ($1, $2, $3, $4, $5)`, [id, new Date(post.createdAt), post.type, post.creator.uid, post.text || 'gm']);
+          await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator, text) VALUES ($1, $2, $3, $4, $5)`, [post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64'), new Date(post.createdAt), post.type, post.creator.uid, post.text || 'gm']);
 
         } catch (error) {
         }
@@ -51,7 +50,7 @@ export async function getGms(): Promise<void> {
         const rank = await PostgresClient.oneOrNone('SELECT rank FROM ranks WHERE id = $1;', [post.creator.uid]);
         RabbitChannel.sendToQueue('dstn-gm-gateway-ingest', pack({
           t: 1, d: {
-            id,
+            id: post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64'),
             creation_time: new Date(post.createdAt).toISOString(),
             type: post.type,
             text: post.text,
