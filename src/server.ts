@@ -61,6 +61,8 @@ server.get('/gm/last', async (req: FastifyRequest, reply) => {
 });
 
 server.post('/gm', async (req: FastifyRequest, reply) => {
+  if (await RedisClient.exists('last/gm')) return Failed(reply, 400, 'already_said_gm_today');
+
   await postGm();
 
   const tomorrows_date = new Date();
