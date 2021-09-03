@@ -21,7 +21,7 @@ export async function getGms(): Promise<void> {
         if (db) continue;
 
         const user = await PostgresClient.oneOrNone('SELECT id, score, avatar, name, username FROM users WHERE id = $1;', [post.creator.uid]);
-        if (!user) await PostgresClient.none('INSERT INTO users (id, username, name, bio, avatar) VALUES ($1, $2, $3, $4, $5, $6);', [
+        if (!user) await PostgresClient.none('INSERT INTO users (id, username, name, bio, avatar) VALUES ($1, $2, $3, $4, $5);', [
           post.creator.uid,
           post.creator.username,
           post.creator.name,
