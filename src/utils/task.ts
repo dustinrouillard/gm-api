@@ -41,7 +41,7 @@ export async function getGms(): Promise<void> {
           ]);
         }
 
-        await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator) VALUES ($1, $2, $3, $4)`, [id, new Date(post.createdAt), post.type, post.creator.uid]);
+        await PostgresClient.none(`INSERT INTO posts (id, creation_time, type, creator, text) VALUES ($1, $2, $3, $4, $5)`, [id, new Date(post.createdAt), post.type, post.creator.uid, post.text || 'gm']);
 
         Debug(`New ${post.type.toLowerCase()} from ${post.creator.name} @${post.creator.username}`);
         const rank = await PostgresClient.oneOrNone('SELECT rank FROM ranks WHERE id = $1;', [post.creator.uid]);

@@ -79,6 +79,7 @@ server.get('/recents', async (req: FastifyRequest, reply) => {
       p.id,
         p.creation_time,
         p.type,
+        p.text,
         json_build_object('id', u.id, 'name', u.name, 'username', u.username, 'score', u.score, 'avatar', u.avatar, 'bio', u.bio, 'rank', r.rank) as creator
     FROM
       posts p

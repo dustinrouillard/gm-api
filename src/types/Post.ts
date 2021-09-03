@@ -2,6 +2,7 @@ export interface Post {
   id: string;
   createdAt: number;
   type: string;
+  text: string;
   creator: Creator;
   updatedAt: number;
 }
