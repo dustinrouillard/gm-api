@@ -50,6 +50,7 @@ export async function getGms(): Promise<void> {
             id,
             creation_time: new Date(post.createdAt).toISOString(),
             type: post.type,
+            text: post.text,
             creator: {
               id: post.creator.uid,
               score: post.creator.gmScore + 1,
