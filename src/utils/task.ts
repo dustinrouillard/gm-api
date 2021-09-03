@@ -70,7 +70,7 @@ export async function getGms(): Promise<void> {
             embeds: [{
               title: post.type.toLowerCase(),
               description: `${post.creator.name} currently has ${(post.creator.gmScore + 1).toLocaleString()
-                } score`,
+                } official gm score`,
               author: { name: `${post.creator.name} @${post.creator.username} `, icon_url: post.creator.avatarUrl },
               timestamp: new Date(post.createdAt).toISOString(),
               footer: { text: 'gm watcher • dstn.to' }
