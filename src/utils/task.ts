@@ -99,7 +99,7 @@ export async function getGms(): Promise<void> {
         resolve(true);
       }, 1000 * 60));
     }
-  }, 5000);
+  }, 3000);
 
   async function call() {
     const last_top = JSON.parse(await RedisClient.get('users/top') || '[]');
