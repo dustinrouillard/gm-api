@@ -64,6 +64,6 @@ server.listen(PortConfig, '0.0.0.0', async () => {
 
   if (!DisableTask) {
     Log("Starting listen task for new gm's ;)");
-    import('./utils/task');
+    // import('./utils/task');
   }
 });
