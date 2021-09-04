@@ -72,8 +72,6 @@ export async function getGms(): Promise<void> {
         const cachedTop = JSON.parse(await RedisClient.get('users/top') || '[]');
         const hasUser = cachedTop.find((user: { id: string; score: number }) => user.id == post.creator.uid);
         if (hasUser) {
-          // User has new score, we need to update the top and push lb update to queue
-          hasUser.score = post.creator.gmScore + 1;
           await RedisClient.set('users/top', JSON.stringify(cachedTop));
           RabbitChannel.sendToQueue('dstn-gm-gateway-ingest', pack({ t: 0, d: { leaderboard: cachedTop } }));
         }
