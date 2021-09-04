@@ -17,6 +17,7 @@ export async function getGms(): Promise<void> {
       const posts = await getPosts();
 
       for await (const post of posts) {
+        if (await RedisClient.exists(`ignored/${post.creator.uid}`)) continue;
         const has_post = await RedisClient.get(`posts/${post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64')}`);
         if (has_post) continue;
         else await RedisClient.set(`posts/${post.id || Buffer.from(`${post.createdAt}:${post.creator.uid}`).toString('base64')}`, 'true');
