@@ -43,7 +43,7 @@ server.get('/search', async (req: FastifyRequest<{ Querystring: { query: string 
 });
 
 server.get('/top', async (req: FastifyRequest, reply) => {
-  const users = await PostgresClient.manyOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE users.hidden IS FALSE ORDER BY rank ASC LIMIT 10;');
+  const users = await PostgresClient.manyOrNone('SELECT users.id, score, username, name, bio, avatar, rank FROM users LEFT JOIN ranks ON users.id = ranks.id WHERE users.hidden IS FALSE ORDER BY rank ASC LIMIT 50;');
 
   return Success(reply, 200, users);
 });
